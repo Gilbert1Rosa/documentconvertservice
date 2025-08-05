@@ -12,7 +12,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new ProgressWebSocketHandler(), "/progress")
+        registry.addHandler(new ProgressWebSocketHandler(), "/documents/progress")
                 .setAllowedOrigins("*");
     }
 }
