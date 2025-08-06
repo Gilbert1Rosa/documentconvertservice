@@ -25,37 +25,36 @@ public class ExportService {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ImageWriter writer = ImageIO.getImageWritersByFormatName("TIFF").next();
 
-        for (Document document : documents) {
-            ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(outputStream);
-            try (PDDocument pdDocument = PDDocument.load(document.getContent())) {
-                PDFRenderer pdfRenderer = new PDFRenderer(pdDocument);
+        try (ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(outputStream)) {
+            writer.setOutput(imageOutputStream);
 
-                int pageCount = pdDocument.getNumberOfPages();
+            ImageWriteParam params = writer.getDefaultWriteParam();
+            params.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
 
-                writer.setOutput(imageOutputStream);
+            params.setCompressionType("Deflate");
+            writer.prepareWriteSequence(null);
 
-                ImageWriteParam params = writer.getDefaultWriteParam();
-                params.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-
-                params.setCompressionType("Deflate");
-                writer.prepareWriteSequence(null);
-
-                for (int pageIndex = 0; pageIndex < pageCount; pageIndex++) {
-                    BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(
-                            pageIndex,
-                            resolution,
-                            ImageType.RGB
-                    );
-                    writer.writeInsert(pageIndex, new IIOImage(bufferedImage, null, null), params);
+            int tiffIndex = 0;
+            for (Document document : documents) {
+                try (PDDocument pdDocument = PDDocument.load(document.getContent())) {
+                    PDFRenderer pdfRenderer = new PDFRenderer(pdDocument);
+                    int pageCount = pdDocument.getNumberOfPages();
+                    for (int pageIndex = 0; pageIndex < pageCount; pageIndex++) {
+                        BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(
+                                pageIndex,
+                                resolution,
+                                ImageType.RGB
+                        );
+                        writer.writeInsert(tiffIndex, new IIOImage(bufferedImage, null, null), params);
+                        tiffIndex++;
+                    }
                 }
-
-                writer.endWriteSequence();
             }
-            imageOutputStream.close();
+
+            writer.endWriteSequence();
         }
 
-        byte[] outputBytes = outputStream.toByteArray();
-        return new ByteArrayInputStream(outputBytes);
+        return new ByteArrayInputStream(outputStream.toByteArray());
     }
 
     public void saveFile(Document document) {
