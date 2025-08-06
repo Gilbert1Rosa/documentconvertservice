@@ -7,7 +7,8 @@ public class Document {
     public enum DocumentType {
         PDF,
         DOC,
-        DOCX
+        DOCX,
+        UNKNOWN
     }
 
     private String documentId;

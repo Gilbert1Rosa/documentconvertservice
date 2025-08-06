@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import util.DocumentUtil;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -48,12 +49,7 @@ public class DocumentController {
     public ResponseEntity<?> uploadDocument(
                 @RequestParam("file") MultipartFile file
             ) throws IOException {
-        Document document = new Document();
-        document.setDocumentId(UUID.randomUUID().toString());
-        document.setContent(file.getBytes());
-        document.setName(file.getName());
-        document.setType(Document.DocumentType.PDF);
-
+        Document document = DocumentUtil.multipartToDocument(file);
         exportService.saveFile(document);
 
         return ResponseEntity.ok(document);
