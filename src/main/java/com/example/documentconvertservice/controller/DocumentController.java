@@ -48,15 +48,15 @@ public class DocumentController {
     @PostMapping("/upload")
     public ResponseEntity<?> uploadDocument(
                 @RequestParam("file") MultipartFile file
-            ) throws IOException {
+            ) throws Exception {
         Document document = DocumentUtil.multipartToDocument(file);
         exportService.saveFile(document);
 
         return ResponseEntity.ok(document);
     }
 
-    @ExceptionHandler(IOException.class)
-    public ResponseEntity<?> handleIOException(IOException ioe) {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleIOException(Exception ioe) {
         return ResponseEntity.badRequest().build();
     }
 }
