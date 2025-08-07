@@ -8,7 +8,8 @@ public class Document {
         PDF,
         DOC,
         DOCX,
-        UNKNOWN
+        UNKNOWN,
+        TIFF
     }
 
     private String documentId;

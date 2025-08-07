@@ -6,10 +6,8 @@ import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
+import javax.imageio.*;
+import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -25,6 +23,8 @@ public class ExportService {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ImageWriter writer = ImageIO.getImageWritersByFormatName("TIFF").next();
 
+        ImageReader reader = ImageIO.getImageReadersByFormatName("TIFF").next();
+
         try (ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(outputStream)) {
             writer.setOutput(imageOutputStream);
 
@@ -36,17 +36,33 @@ public class ExportService {
 
             int tiffIndex = 0;
             for (Document document : documents) {
-                try (PDDocument pdDocument = PDDocument.load(document.getContent())) {
-                    PDFRenderer pdfRenderer = new PDFRenderer(pdDocument);
-                    int pageCount = pdDocument.getNumberOfPages();
-                    for (int pageIndex = 0; pageIndex < pageCount; pageIndex++) {
-                        BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(
-                                pageIndex,
-                                resolution,
-                                ImageType.RGB
-                        );
-                        writer.writeInsert(tiffIndex, new IIOImage(bufferedImage, null, null), params);
-                        tiffIndex++;
+
+                if (document.getType() == Document.DocumentType.TIFF) {
+                    ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(document.getContent());
+                    try (ImageInputStream imageInputStream = ImageIO.createImageInputStream(byteArrayInputStream)) {
+                        reader.setInput(imageInputStream);
+
+                        int numImages = reader.getNumImages(true);
+
+                        for (int imageIndex = 0; imageIndex < numImages; imageIndex++) {
+                            BufferedImage image = reader.read(imageIndex);
+                            writer.writeInsert(tiffIndex, new IIOImage(image, null, null), params);
+                            tiffIndex++;
+                        }
+                    }
+                } else if (document.getType() == Document.DocumentType.PDF) {
+                    try (PDDocument pdDocument = PDDocument.load(document.getContent())) {
+                        PDFRenderer pdfRenderer = new PDFRenderer(pdDocument);
+                        int pageCount = pdDocument.getNumberOfPages();
+                        for (int pageIndex = 0; pageIndex < pageCount; pageIndex++) {
+                            BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(
+                                    pageIndex,
+                                    resolution,
+                                    ImageType.RGB
+                            );
+                            writer.writeInsert(tiffIndex, new IIOImage(bufferedImage, null, null), params);
+                            tiffIndex++;
+                        }
                     }
                 }
             }
