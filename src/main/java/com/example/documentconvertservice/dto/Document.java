@@ -16,6 +16,8 @@ public class Document {
     private DocumentType type;
     private String name;
     private byte[] content;
+    private int startPage;
+    private int endPage;
 
     public String getDocumentId() {
         return documentId;
@@ -48,5 +50,21 @@ public class Document {
 
     public void setContent(byte[] content) {
         this.content = content;
+    }
+
+    public int getStartPage() {
+        return startPage;
+    }
+
+    public void setStartPage(int startPage) {
+        this.startPage = startPage;
+    }
+
+    public int getEndPage() {
+        return endPage;
+    }
+
+    public void setEndPage(int endPage) {
+        this.endPage = endPage;
     }
 }

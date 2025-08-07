@@ -8,10 +8,22 @@ import java.util.UUID;
 
 public class DocumentUtil {
 
-    public static Document multipartToDocument(MultipartFile file) throws IOException {
+    public static Document multipartToDocument(MultipartFile file, int startPage, int endPage) throws IOException {
 
         if (file.getOriginalFilename() == null) {
             throw new IllegalArgumentException("No file name");
+        }
+
+        if (startPage < 0) {
+            throw new IllegalArgumentException("Negative start page not allowed");
+        }
+
+        if (endPage < 0) {
+            throw new IllegalArgumentException("Negative end page not allowed");
+        }
+
+        if (startPage > endPage) {
+            throw new IllegalArgumentException("Start page cannot be higher than end page");
         }
 
         String name = file.getOriginalFilename();
@@ -49,6 +61,9 @@ public class DocumentUtil {
         }
 
         document.setType(type);
+        document.setStartPage(startPage);
+        document.setEndPage(endPage);
+
         return document;
     }
 

@@ -36,7 +36,6 @@ public class ExportService {
 
             int tiffIndex = 0;
             for (Document document : documents) {
-
                 if (document.getType() == Document.DocumentType.TIFF) {
                     ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(document.getContent());
                     try (ImageInputStream imageInputStream = ImageIO.createImageInputStream(byteArrayInputStream)) {
@@ -54,7 +53,15 @@ public class ExportService {
                     try (PDDocument pdDocument = PDDocument.load(document.getContent())) {
                         PDFRenderer pdfRenderer = new PDFRenderer(pdDocument);
                         int pageCount = pdDocument.getNumberOfPages();
-                        for (int pageIndex = 0; pageIndex < pageCount; pageIndex++) {
+
+                        int start = document.getStartPage();
+                        int stop = Math.min(document.getEndPage(), pageCount);
+
+                        if (start < 0 || stop < 0) {
+                            throw new IllegalArgumentException("Start and stop page cannot be negative");
+                        }
+
+                        for (int pageIndex = start; pageIndex < stop; pageIndex++) {
                             BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(
                                     pageIndex,
                                     resolution,
