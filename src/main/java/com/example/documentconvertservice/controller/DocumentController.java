@@ -49,10 +49,11 @@ public class DocumentController {
     public ResponseEntity<?> uploadDocument(
                 @RequestParam(value = "file") MultipartFile file,
                 @RequestParam(value = "start_page", required = false, defaultValue = "0") Integer startPage,
-                @RequestParam(value = "end_page", required = false, defaultValue = "0") Integer endPage
+                @RequestParam(value = "end_page", required = false, defaultValue = "0") Integer endPage,
+                @RequestParam(value = "new_group", required = false, defaultValue = "false") Boolean isNewGroup
             ) throws IOException {
         Document document = DocumentUtil.multipartToDocument(file, startPage, endPage);
-        exportService.saveFile(document);
+        exportService.saveFile(document, isNewGroup);
 
         return ResponseEntity.ok(document);
     }

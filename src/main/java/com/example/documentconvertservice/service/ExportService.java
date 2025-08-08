@@ -55,13 +55,13 @@ public class ExportService {
                         int pageCount = pdDocument.getNumberOfPages();
 
                         int start = document.getStartPage();
-                        int stop = Math.min(document.getEndPage(), pageCount);
+                        int stop = Math.min(document.getEndPage(), pageCount - 1);
 
                         if (start < 0 || stop < 0) {
                             throw new IllegalArgumentException("Start and stop page cannot be negative");
                         }
 
-                        for (int pageIndex = start; pageIndex < stop; pageIndex++) {
+                        for (int pageIndex = start; pageIndex <= stop; pageIndex++) {
                             BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(
                                     pageIndex,
                                     resolution,
@@ -80,7 +80,11 @@ public class ExportService {
         return new ByteArrayInputStream(outputStream.toByteArray());
     }
 
-    public void saveFile(Document document) {
+    public void saveFile(Document document, boolean isNewGroup) {
+        if (isNewGroup) {
+            documents.clear();
+        }
+
         documents.add(document);
     }
 
