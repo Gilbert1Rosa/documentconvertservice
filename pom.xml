@@ -18,7 +18,10 @@
 		<license/>
 	</licenses>
 	<developers>
-		<developer/>
+		<developer>
+			<name>Gilbert Rosa</name>
+			<email>gilbertli2033@gmail.com</email>
+		</developer>
 	</developers>
 	<scm>
 		<connection/>

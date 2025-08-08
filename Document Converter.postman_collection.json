@@ -1,0 +1,127 @@
+{
+	"info": {
+		"_postman_id": "0a5eb4e4-9df0-4ca9-9c1a-3d6f24f4dae3",
+		"name": "Document Converter",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6132832"
+	},
+	"item": [
+		{
+			"name": "Upload",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/Gilbert/Downloads/Curriculum.pdf"
+						},
+						{
+							"key": "start_page",
+							"value": "0",
+							"type": "text"
+						},
+						{
+							"key": "end_page",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{SERVER_URL}}/documents/upload",
+					"host": [
+						"{{SERVER_URL}}"
+					],
+					"path": [
+						"documents",
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Uploaded documents list",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{SERVER_URL}}/documents",
+					"host": [
+						"{{SERVER_URL}}"
+					],
+					"path": [
+						"documents"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Export",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{SERVER_URL}}/documents/export?resolution=100",
+					"host": [
+						"{{SERVER_URL}}"
+					],
+					"path": [
+						"documents",
+						"export"
+					],
+					"query": [
+						{
+							"key": "resolution",
+							"value": "100"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "SERVER_URL",
+			"value": "localhost:8080",
+			"type": "string"
+		}
+	]
+}
