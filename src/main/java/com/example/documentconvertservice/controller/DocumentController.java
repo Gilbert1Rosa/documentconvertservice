@@ -47,9 +47,9 @@ public class DocumentController {
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadDocument(
-                @RequestParam("file") MultipartFile file,
-                @RequestParam("start_page") Integer startPage,
-                @RequestParam("end_page") Integer endPage
+                @RequestParam(value = "file") MultipartFile file,
+                @RequestParam(value = "start_page", required = false, defaultValue = "0") Integer startPage,
+                @RequestParam(value = "end_page", required = false, defaultValue = "0") Integer endPage
             ) throws IOException {
         Document document = DocumentUtil.multipartToDocument(file, startPage, endPage);
         exportService.saveFile(document);

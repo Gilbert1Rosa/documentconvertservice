@@ -9,7 +9,6 @@ import java.util.UUID;
 public class DocumentUtil {
 
     public static Document multipartToDocument(MultipartFile file, int startPage, int endPage) throws IOException {
-
         if (file.getOriginalFilename() == null) {
             throw new IllegalArgumentException("No file name");
         }
