@@ -1,6 +1,7 @@
 package com.example.documentconvertservice.service;
 
 import com.example.documentconvertservice.dto.Document;
+import com.example.documentconvertservice.dto.DocumentDetails;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -88,7 +89,16 @@ public class ExportService {
         documents.add(document);
     }
 
-    public List<Document> getDocuments() {
-        return documents;
+    public DocumentDetails getDocuments() {
+        DocumentDetails details = new DocumentDetails();
+        double totalSize = 0.0;
+
+        for (Document document : documents) {
+            totalSize += document.getContent().length;
+        }
+
+        details.setDocuments(documents);
+        details.setTotalSize(totalSize);
+        return details;
     }
 }
