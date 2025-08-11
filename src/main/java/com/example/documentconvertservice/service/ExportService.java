@@ -2,9 +2,11 @@ package com.example.documentconvertservice.service;
 
 import com.example.documentconvertservice.dto.Document;
 import com.example.documentconvertservice.dto.DocumentDetails;
+import com.example.documentconvertservice.websocket.ProgressWebSocketHandler;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.*;
@@ -17,6 +19,9 @@ import java.util.List;
 
 @Service
 public class ExportService {
+
+    @Autowired
+    private ProgressWebSocketHandler webSocketHandler;
 
     private static final List<Document> documents = new ArrayList<>();
 
@@ -36,7 +41,10 @@ public class ExportService {
             writer.prepareWriteSequence(null);
 
             int tiffIndex = 0;
+            int documentIndex = 0;
+            int totalDocuments = documents.size();
             for (Document document : documents) {
+                webSocketHandler.sendProgress((double) documentIndex / totalDocuments * 100);
                 if (document.getType() == Document.DocumentType.TIFF) {
                     ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(document.getContent());
                     try (ImageInputStream imageInputStream = ImageIO.createImageInputStream(byteArrayInputStream)) {
@@ -73,10 +81,13 @@ public class ExportService {
                         }
                     }
                 }
+                documentIndex++;
             }
 
             writer.endWriteSequence();
         }
+
+        webSocketHandler.sendProgress(100);
 
         return new ByteArrayInputStream(outputStream.toByteArray());
     }
