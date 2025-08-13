@@ -1,12 +1,19 @@
 package com.example.documentconvertservice.data;
 
+import jakarta.persistence.*;
+
 import java.util.UUID;
 
+@Entity
 public class Document {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     private String name;
+
+    @Enumerated(EnumType.STRING)
     private DocumentType type;
 
     private Integer pages;

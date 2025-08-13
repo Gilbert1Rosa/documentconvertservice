@@ -16,6 +16,12 @@ public class UserController {
     private UserService userService;
 
 
+    @PostMapping("/login")
+    public ResponseEntity<?> login() {
+        return ResponseEntity.ok(null);
+    }
+
+
     @PostMapping("/create")
     public ResponseEntity<?> addUser(
             @RequestParam("username") String username,

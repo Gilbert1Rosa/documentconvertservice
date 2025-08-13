@@ -27,22 +27,23 @@ public class SecurityConfig {
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userService);
         provider.setPasswordEncoder(passwordEncoder());
-        return null;
+        return provider;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
+        return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
+                .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(
                         authorizeRequest -> authorizeRequest
                                 .requestMatchers("/documents").hasAnyAuthority("regular")
                                 .requestMatchers("/documents/export").hasAnyAuthority("regular")
                                 .requestMatchers("/documents/upload").hasAnyAuthority("regular")
                                 .anyRequest().permitAll()
-                ).formLogin(Customizer.withDefaults());
-        return httpSecurity.build();
+                ).formLogin(Customizer.withDefaults())
+                .build();
     }
 
     @Bean

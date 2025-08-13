@@ -1,5 +1,6 @@
 package com.example.documentconvertservice.data;
 
+import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,10 +10,14 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Entity
+@Table(name = "users")
 public class User implements UserDetails {
 
     private static final String AUTHORITIES_DELIMITER = "::";
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     private String username;
     private String password;
