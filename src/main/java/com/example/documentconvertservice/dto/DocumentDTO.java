@@ -1,16 +1,10 @@
 package com.example.documentconvertservice.dto;
 
+import com.example.documentconvertservice.data.DocumentType;
+
 import java.beans.Transient;
 
-public class Document {
-
-    public enum DocumentType {
-        PDF,
-        DOC,
-        DOCX,
-        UNKNOWN,
-        TIFF
-    }
+public class DocumentDTO {
 
     private String documentId;
     private DocumentType type;

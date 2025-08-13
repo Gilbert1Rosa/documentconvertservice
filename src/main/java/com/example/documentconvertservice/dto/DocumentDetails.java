@@ -3,14 +3,14 @@ package com.example.documentconvertservice.dto;
 import java.util.List;
 
 public class DocumentDetails {
-    private List<Document> documents;
+    private List<DocumentDTO> documents;
     private Double totalSize;
 
-    public List<Document> getDocuments() {
+    public List<DocumentDTO> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(List<Document> documents) {
+    public void setDocuments(List<DocumentDTO> documents) {
         this.documents = documents;
     }
 

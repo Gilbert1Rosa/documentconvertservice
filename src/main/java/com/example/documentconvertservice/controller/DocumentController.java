@@ -1,6 +1,6 @@
 package com.example.documentconvertservice.controller;
 
-import com.example.documentconvertservice.dto.Document;
+import com.example.documentconvertservice.dto.DocumentDTO;
 import com.example.documentconvertservice.service.ExportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 import util.DocumentUtil;
 
 import java.io.IOException;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/documents")
@@ -52,7 +51,7 @@ public class DocumentController {
                 @RequestParam(value = "end_page", required = false, defaultValue = "0") Integer endPage,
                 @RequestParam(value = "new_group", required = false, defaultValue = "false") Boolean isNewGroup
             ) throws IOException {
-        Document document = DocumentUtil.multipartToDocument(file, startPage, endPage);
+        DocumentDTO document = DocumentUtil.multipartToDocument(file, startPage, endPage);
         exportService.saveFile(document, isNewGroup);
 
         return ResponseEntity.ok(document);

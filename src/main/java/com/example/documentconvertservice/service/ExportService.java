@@ -1,7 +1,8 @@
 package com.example.documentconvertservice.service;
 
-import com.example.documentconvertservice.dto.Document;
+import com.example.documentconvertservice.dto.DocumentDTO;
 import com.example.documentconvertservice.dto.DocumentDetails;
+import com.example.documentconvertservice.data.DocumentType;
 import com.example.documentconvertservice.websocket.ProgressWebSocketHandler;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 import javax.imageio.*;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
-import javax.print.Doc;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class ExportService {
     @Autowired
     private ProgressWebSocketHandler webSocketHandler;
 
-    private static final List<Document> documents = new ArrayList<>();
+    private static final List<DocumentDTO> documents = new ArrayList<>();
 
     public InputStream getExport(int resolution) throws IOException {
 
@@ -47,7 +47,7 @@ public class ExportService {
             int tiffIndex = 0;
             int totalPages = 0;
 
-            for (Document document : documents) {
+            for (DocumentDTO document : documents) {
                 switch (document.getType()) {
                     case PDF -> {
                         try (PDDocument pdDocument = PDDocument.load(document.getContent())) {
@@ -65,11 +65,11 @@ public class ExportService {
                 }
             }
 
-            for (Document document : documents) {
+            for (DocumentDTO document : documents) {
                 webSocketHandler.sendProgress((double) tiffIndex / totalPages * 100);
-                if (document.getType() == Document.DocumentType.TIFF) {
+                if (document.getType() == DocumentType.TIFF) {
                     tiffIndex = readTIFF(document, writer, params, tiffIndex);
-                } else if (document.getType() == Document.DocumentType.PDF) {
+                } else if (document.getType() == DocumentType.PDF) {
                     tiffIndex = readPDF(document, writer, params, tiffIndex, resolution);
                 }
             }
@@ -82,7 +82,7 @@ public class ExportService {
         return new ByteArrayInputStream(outputStream.toByteArray());
     }
 
-    public void saveFile(Document document, boolean isNewGroup) {
+    public void saveFile(DocumentDTO document, boolean isNewGroup) {
         if (isNewGroup) {
             documents.clear();
         }
@@ -94,7 +94,7 @@ public class ExportService {
         DocumentDetails details = new DocumentDetails();
         double totalSize = 0.0;
 
-        for (Document document : documents) {
+        for (DocumentDTO document : documents) {
             totalSize += document.getContent().length;
         }
 
@@ -103,7 +103,7 @@ public class ExportService {
         return details;
     }
 
-    private int readTIFF(Document document, ImageWriter writer, ImageWriteParam params, int tiffIndex) throws IOException {
+    private int readTIFF(DocumentDTO document, ImageWriter writer, ImageWriteParam params, int tiffIndex) throws IOException {
         ImageReader reader = ImageIO.getImageReadersByFormatName("TIFF").next();
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(document.getContent());
         try (ImageInputStream imageInputStream = ImageIO.createImageInputStream(byteArrayInputStream)) {
@@ -121,7 +121,7 @@ public class ExportService {
         return tiffIndex;
     }
 
-    private int readPDF(Document document, ImageWriter writer, ImageWriteParam params, int tiffIndex, int resolution) throws IOException {
+    private int readPDF(DocumentDTO document, ImageWriter writer, ImageWriteParam params, int tiffIndex, int resolution) throws IOException {
         try (PDDocument pdDocument = PDDocument.load(document.getContent())) {
             PDFRenderer pdfRenderer = new PDFRenderer(pdDocument);
             int pageCount = pdDocument.getNumberOfPages();

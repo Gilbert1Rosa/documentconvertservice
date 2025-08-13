@@ -1,6 +1,7 @@
 package util;
 
-import com.example.documentconvertservice.dto.Document;
+import com.example.documentconvertservice.dto.DocumentDTO;
+import com.example.documentconvertservice.data.DocumentType;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -8,7 +9,7 @@ import java.util.UUID;
 
 public class DocumentUtil {
 
-    public static Document multipartToDocument(MultipartFile file, int startPage, int endPage) throws IOException {
+    public static DocumentDTO multipartToDocument(MultipartFile file, int startPage, int endPage) throws IOException {
         if (file.getOriginalFilename() == null) {
             throw new IllegalArgumentException("No file name");
         }
@@ -26,22 +27,22 @@ public class DocumentUtil {
         }
 
         String name = file.getOriginalFilename();
-        Document document = new Document();
+        DocumentDTO document = new DocumentDTO();
         document.setDocumentId(UUID.randomUUID().toString());
         document.setName(name);
 
-        Document.DocumentType type;
+        DocumentType type;
 
         if (name.toLowerCase().endsWith(".pdf")) {
-            type = Document.DocumentType.PDF;
+            type = DocumentType.PDF;
         } else if (name.toLowerCase().endsWith(".doc")) {
-            type = Document.DocumentType.DOC;
+            type = DocumentType.DOC;
         } else if (name.toLowerCase().endsWith(".docx")) {
-            type = Document.DocumentType.DOCX;
+            type = DocumentType.DOCX;
         } else if (name.toLowerCase().endsWith(".tiff")) {
-            type = Document.DocumentType.TIFF;
+            type = DocumentType.TIFF;
         } else {
-            type = Document.DocumentType.UNKNOWN;
+            type = DocumentType.UNKNOWN;
         }
 
         switch(type) {
