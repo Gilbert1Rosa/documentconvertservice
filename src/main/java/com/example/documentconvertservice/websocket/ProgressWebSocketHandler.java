@@ -1,6 +1,5 @@
 package com.example.documentconvertservice.websocket;
 
-import com.example.documentconvertservice.dto.ProgressDetails;
 import org.springframework.lang.NonNull;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
