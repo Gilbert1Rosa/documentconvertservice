@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import util.DocumentUtil;
 
 import java.io.IOException;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/documents")
@@ -22,15 +23,18 @@ public class DocumentController {
     private ExportService exportService;
 
     @GetMapping
-    public ResponseEntity<?> getDocuments() {
-        return ResponseEntity.ok(exportService.getDocuments());
+    public ResponseEntity<?> getDocuments(
+            Principal principal
+    ) {
+        return ResponseEntity.ok(exportService.getDocuments(principal));
     }
 
     @GetMapping("/export")
     public ResponseEntity<?> downloadDocument(
-            @RequestParam("resolution") Integer resolution
+            @RequestParam("resolution") Integer resolution,
+            Principal principal
     ) throws IOException {
-        InputStreamResource resource = new InputStreamResource(exportService.getExport(resolution));
+        InputStreamResource resource = new InputStreamResource(exportService.getExport(resolution, principal));
         HttpHeaders headers = new HttpHeaders();
         headers.setContentDisposition(
                 ContentDisposition
@@ -49,10 +53,11 @@ public class DocumentController {
                 @RequestParam(value = "file") MultipartFile file,
                 @RequestParam(value = "start_page", required = false, defaultValue = "0") Integer startPage,
                 @RequestParam(value = "end_page", required = false, defaultValue = "0") Integer endPage,
-                @RequestParam(value = "new_group", required = false, defaultValue = "false") Boolean isNewGroup
+                @RequestParam(value = "new_group", required = false, defaultValue = "false") Boolean isNewGroup,
+                Principal principal
             ) throws IOException {
         DocumentDTO document = DocumentUtil.multipartToDocument(file, startPage, endPage);
-        exportService.saveFile(document, isNewGroup);
+        exportService.saveFile(document, isNewGroup, principal);
 
         return ResponseEntity.ok(document);
     }

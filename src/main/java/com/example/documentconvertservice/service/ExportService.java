@@ -15,6 +15,7 @@ import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,11 +25,15 @@ public class ExportService {
     @Autowired
     private ProgressWebSocketHandler webSocketHandler;
 
-    private static final List<DocumentDTO> documents = new ArrayList<>();
+    @Autowired
+    private DocumentService documentService;
 
-    public InputStream getExport(int resolution) throws IOException {
+    public InputStream getExport(int resolution, Principal principal) throws IOException {
 
-        if (documents.isEmpty()) {
+        String username = principal.getName();
+        List<DocumentDTO> documents = documentService.getDocuments(username);
+
+        if (documents == null || documents.isEmpty()) {
             throw new IllegalArgumentException("No documents uploaded");
         }
 
@@ -82,15 +87,20 @@ public class ExportService {
         return new ByteArrayInputStream(outputStream.toByteArray());
     }
 
-    public void saveFile(DocumentDTO document, boolean isNewGroup) {
+    public void saveFile(DocumentDTO document, boolean isNewGroup, Principal principal) {
+        String username = principal.getName();
+
         if (isNewGroup) {
-            documents.clear();
+            documentService.deleteGroup(username);
         }
 
+        List<DocumentDTO> documents = documentService.getDocuments(username);
         documents.add(document);
     }
 
-    public DocumentDetails getDocuments() {
+    public DocumentDetails getDocuments(Principal principal) {
+        List<DocumentDTO> documents = documentService.getDocuments(principal.getName());
+
         DocumentDetails details = new DocumentDetails();
         double totalSize = 0.0;
 
