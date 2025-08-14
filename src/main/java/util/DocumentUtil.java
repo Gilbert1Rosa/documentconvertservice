@@ -2,6 +2,7 @@ package util;
 
 import com.example.documentconvertservice.dto.DocumentDTO;
 import com.example.documentconvertservice.data.DocumentType;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -65,6 +66,18 @@ public class DocumentUtil {
         document.setEndPage(endPage);
 
         return document;
+    }
+
+    public static int getNumberOfPages(DocumentDTO document) throws IOException {
+        int pages = 0;
+
+        if (document.getType() == DocumentType.PDF) {
+            try (PDDocument pdDocument = PDDocument.load(document.getContent())) {
+                pages = pdDocument.getNumberOfPages();
+            }
+        }
+
+        return pages;
     }
 
     private static byte[] convertDocxToPdfData(byte[] docxFileData) {

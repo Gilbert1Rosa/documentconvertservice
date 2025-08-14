@@ -1,14 +1,18 @@
 package com.example.documentconvertservice.service;
 
+import com.example.documentconvertservice.data.ConversionHistory;
+import com.example.documentconvertservice.data.Document;
 import com.example.documentconvertservice.dto.DocumentDTO;
 import com.example.documentconvertservice.dto.DocumentDetails;
 import com.example.documentconvertservice.data.DocumentType;
+import com.example.documentconvertservice.repository.ConversionHistoryRepository;
 import com.example.documentconvertservice.websocket.ProgressWebSocketHandler;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import util.DocumentUtil;
 
 import javax.imageio.*;
 import javax.imageio.stream.ImageInputStream;
@@ -16,6 +20,7 @@ import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +32,9 @@ public class ExportService {
 
     @Autowired
     private DocumentService documentService;
+
+    @Autowired
+    private ConversionHistoryRepository conversionHistoryRepository;
 
     public InputStream getExport(int resolution, Principal principal) throws IOException {
 
@@ -83,6 +91,7 @@ public class ExportService {
         }
 
         webSocketHandler.sendProgress(100);
+        saveConversionHistory(documents);
 
         return new ByteArrayInputStream(outputStream.toByteArray());
     }
@@ -111,6 +120,38 @@ public class ExportService {
         details.setDocuments(documents);
         details.setTotalSize(totalSize);
         return details;
+    }
+
+    private boolean saveConversionHistory(List<DocumentDTO> documentDTOS) throws IOException {
+        List<Document> documents = new ArrayList<>();
+        int totalPages = 0;
+
+        for (DocumentDTO documentDTO : documentDTOS) {
+            int pages = DocumentUtil.getNumberOfPages(documentDTO);
+
+            if (documentDTO.getStartPage() < documentDTO.getEndPage()) {
+                pages = documentDTO.getEndPage() - documentDTO.getStartPage();
+            }
+
+            documents.add(Document
+                    .builder()
+                            .name(documentDTO.getName())
+                            .pages(pages)
+                            .type(documentDTO.getType())
+                    .build());
+
+            totalPages += pages;
+        }
+
+        ConversionHistory history = ConversionHistory.builder()
+                .documents(documents)
+                .totalPages(totalPages)
+                .conversionDate(LocalDateTime.now())
+                .build();
+
+        conversionHistoryRepository.save(history);
+
+        return true;
     }
 
     private int readTIFF(DocumentDTO document, ImageWriter writer, ImageWriteParam params, int tiffIndex) throws IOException {

@@ -3,8 +3,7 @@ package com.example.documentconvertservice.data;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-import java.util.Set;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -19,10 +18,10 @@ public class ConversionHistory {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID conversionId;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<Document> documents;
+    @OneToOne
+    private User user;
 
     private Integer totalPages;
 
-    private LocalDate conversionDate;
+    private LocalDateTime conversionDate;
 }
