@@ -50,13 +50,6 @@ public class UserController {
         ));
     }
 
-    @GetMapping("/principal")
-    public ResponseEntity<?> testGetPrincipal(
-            Principal principal
-    ) {
-        return ResponseEntity.ok(principal.getName());
-    }
-
     @PostMapping("/admin/create")
     public ResponseEntity<?> addUser(
             @RequestParam("username") String username,
