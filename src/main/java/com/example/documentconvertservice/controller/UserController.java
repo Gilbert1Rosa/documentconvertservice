@@ -1,10 +1,13 @@
 package com.example.documentconvertservice.controller;
 
 import com.example.documentconvertservice.dto.LoginResponse;
+import com.example.documentconvertservice.dto.UserDTO;
 import com.example.documentconvertservice.security.JWTUtil;
 import com.example.documentconvertservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -50,6 +53,13 @@ public class UserController {
         ));
     }
 
+    @GetMapping("/admin/list")
+    public ResponseEntity<?> listUsers(
+            Pageable pageable
+    ) {
+        return ResponseEntity.ok(null);
+    }
+
     @PostMapping("/admin/create")
     public ResponseEntity<?> addUser(
             @RequestParam("username") String username,
@@ -57,5 +67,19 @@ public class UserController {
             @RequestParam(value = "isAdmin", defaultValue = "false") Boolean isAdmin
     ) {
         return ResponseEntity.ok(userService.addUser(username, password, isAdmin));
+    }
+
+    @PutMapping("/admin/modify")
+    public ResponseEntity<?> modifyUser(
+            @RequestParam("user") UserDTO user
+    ) {
+        return ResponseEntity.ok(null);
+    }
+
+    @PostMapping("/admin/deactivate")
+    public ResponseEntity<?> deactivateUser(
+            @RequestParam("username") String username
+    ) {
+        return ResponseEntity.ok(null);
     }
 }
