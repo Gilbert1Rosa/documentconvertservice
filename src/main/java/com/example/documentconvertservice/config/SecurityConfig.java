@@ -5,13 +5,12 @@ import com.example.documentconvertservice.data.User;
 import com.example.documentconvertservice.security.JWTFilter;
 import com.example.documentconvertservice.security.JWTUtil;
 import com.example.documentconvertservice.service.UserService;
-import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -66,17 +65,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(Customizer.withDefaults())
                 .sessionManagement(
                         configurer -> configurer
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(
                         authorizeRequest -> authorizeRequest
-                                .requestMatchers("/user/**").permitAll()
-                                .requestMatchers("/documents").hasAnyAuthority(User.UserRole.REGULAR.name())
-                                .requestMatchers("/documents/export").hasAnyAuthority(User.UserRole.REGULAR.name())
-                                .requestMatchers("/documents/upload").hasAnyAuthority(User.UserRole.REGULAR.name())
-                                .anyRequest().permitAll()
+                                .requestMatchers("/user/login*").permitAll()
+                                .requestMatchers("/user/admin/**", "/admin/**").hasAnyAuthority(User.UserAuthority.ADMIN.name())
+                                .anyRequest().hasAuthority(User.UserAuthority.USER.name())
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)

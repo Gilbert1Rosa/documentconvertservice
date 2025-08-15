@@ -50,18 +50,19 @@ public class UserController {
         ));
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<?> addUser(
-            @RequestParam("username") String username,
-            @RequestParam("password") String password
-    ) {
-        return ResponseEntity.ok(userService.addUser(username, password));
-    }
-
     @GetMapping("/principal")
     public ResponseEntity<?> testGetPrincipal(
             Principal principal
     ) {
         return ResponseEntity.ok(principal.getName());
+    }
+
+    @PostMapping("/admin/create")
+    public ResponseEntity<?> addUser(
+            @RequestParam("username") String username,
+            @RequestParam("password") String password,
+            @RequestParam(value = "isAdmin", defaultValue = "false") Boolean isAdmin
+    ) {
+        return ResponseEntity.ok(userService.addUser(username, password, isAdmin));
     }
 }

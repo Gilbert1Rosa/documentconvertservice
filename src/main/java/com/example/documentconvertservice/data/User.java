@@ -1,7 +1,6 @@
 package com.example.documentconvertservice.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,8 +23,8 @@ public class User implements UserDetails {
 
     private static final String AUTHORITIES_DELIMITER = "::";
 
-    public static enum UserRole {
-        REGULAR,
+    public enum UserAuthority {
+        USER,
         ADMIN
     }
 

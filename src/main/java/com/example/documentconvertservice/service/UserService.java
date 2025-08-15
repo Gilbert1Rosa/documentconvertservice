@@ -9,8 +9,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-
 @Service
 public class UserService implements UserDetailsService {
 
@@ -22,11 +20,15 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found!"));
     }
 
-    public Boolean addUser(String username, String password) {
+    public Boolean addUser(String username, String password, boolean isAdmin) {
         User user = new User();
         user.setUsername(username);
         user.setPassword(new BCryptPasswordEncoder().encode(password));
-        user.setAuthorities(User.UserRole.REGULAR.name());
+        user.setAuthorities(User.UserAuthority.USER.name());
+
+        if (isAdmin) {
+            user.setAuthorities(User.UserAuthority.ADMIN.name());
+        }
 
         userRepository.save(user);
 
