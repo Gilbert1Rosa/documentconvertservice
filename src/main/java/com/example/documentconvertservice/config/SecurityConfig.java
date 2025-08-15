@@ -1,6 +1,7 @@
 package com.example.documentconvertservice.config;
 
 
+import com.example.documentconvertservice.data.User;
 import com.example.documentconvertservice.security.JWTFilter;
 import com.example.documentconvertservice.security.JWTUtil;
 import com.example.documentconvertservice.service.UserService;
@@ -72,9 +73,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authorizeRequest -> authorizeRequest
                                 .requestMatchers("/user/**").permitAll()
-                                .requestMatchers("/documents").hasAnyAuthority("regular")
-                                .requestMatchers("/documents/export").hasAnyAuthority("regular")
-                                .requestMatchers("/documents/upload").hasAnyAuthority("regular")
+                                .requestMatchers("/documents").hasAnyAuthority(User.UserRole.REGULAR.name())
+                                .requestMatchers("/documents/export").hasAnyAuthority(User.UserRole.REGULAR.name())
+                                .requestMatchers("/documents/upload").hasAnyAuthority(User.UserRole.REGULAR.name())
                                 .anyRequest().permitAll()
                 )
                 .authenticationProvider(authenticationProvider())

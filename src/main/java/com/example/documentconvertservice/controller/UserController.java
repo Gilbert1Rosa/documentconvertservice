@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/user")
@@ -54,10 +53,9 @@ public class UserController {
     @PostMapping("/create")
     public ResponseEntity<?> addUser(
             @RequestParam("username") String username,
-            @RequestParam("password") String password,
-            @RequestParam(name = "email", defaultValue = "") String email
+            @RequestParam("password") String password
     ) {
-        return ResponseEntity.ok(userService.addUser(username, password, email));
+        return ResponseEntity.ok(userService.addUser(username, password));
     }
 
     @GetMapping("/principal")

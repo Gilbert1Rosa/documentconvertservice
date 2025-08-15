@@ -1,5 +1,7 @@
 package com.example.documentconvertservice.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,19 +24,26 @@ public class User implements UserDetails {
 
     private static final String AUTHORITIES_DELIMITER = "::";
 
+    public static enum UserRole {
+        REGULAR,
+        ADMIN
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(unique = true)
     private String username;
+
+    @JsonIgnore
     private String password;
 
-    private String email;
-
+    @JsonIgnore
     private String authorities;
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Arrays.stream(this.authorities.split(AUTHORITIES_DELIMITER))
                 .map(SimpleGrantedAuthority::new)

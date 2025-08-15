@@ -1,5 +1,6 @@
 package com.example.documentconvertservice.data;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,10 +19,11 @@ public class ConversionHistory {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID conversionId;
 
-    @OneToOne
+    @ManyToOne
+    @JsonIncludeProperties({"username"})
     private User user;
 
-    private Integer totalPages;
+    private Integer pagesConverted;
 
     private LocalDateTime conversionDate;
 }

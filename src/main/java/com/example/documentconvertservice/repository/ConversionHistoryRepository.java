@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface ConversionHistoryRepository extends PagingAndSortingRepository<ConversionHistory, UUID> {
+public interface ConversionHistoryRepository extends PagingAndSortingRepository<ConversionHistory, UUID>, JpaRepository<ConversionHistory, UUID> {
 }
